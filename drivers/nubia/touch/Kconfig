@@ -1,0 +1,38 @@
+config TOUCHSCREEN_SYNAPTICS_DSX
+        tristate "NUBIA SYNAPTICS DEVICE"
+        default n
+if TOUCHSCREEN_SYNAPTICS_DSX
+source "drivers/nubia/touch/synaptics_dsx/Kconfig"
+endif
+
+config TOUCHSCREEN_NUBIA_SYNAPTICS_DSX
+        bool "config nubia synaptics dsx"
+        default n
+        help
+          Say Y here if you have a nubia touchscreen hxchipset connected
+          to your system.
+	  If unsure, say N.
+if TOUCHSCREEN_NUBIA_SYNAPTICS_DSX
+source "drivers/nubia/touch/nubia_synaptics_dsx/Kconfig"
+endif
+
+config TOUCHSCREEN_GOODIX_GTX8
+        tristate "NUBIA SYNAPTICS DEVICE"
+        default n
+if TOUCHSCREEN_GOODIX_GTX8
+source "drivers/nubia/touch/goodix_touch/Kconfig"
+endif
+
+config TOUCHSCREEN_NUBIA_BACK_GOODIX
+        tristate "NUBIA GOODIX BACK DEVICE"
+        default n
+if TOUCHSCREEN_NUBIA_BACK_GOODIX
+source "drivers/nubia/touch/goodix_gtx8_back/Kconfig"
+endif
+
+config TOUCHSCREEN_NUBIA_FRONT_GOODIX
+        tristate "NUBIA GOODIX FRONT DEVICE"
+        default n
+if TOUCHSCREEN_NUBIA_FRONT_GOODIX
+source "drivers/nubia/touch/goodix_gtx8_front/Kconfig"
+endif

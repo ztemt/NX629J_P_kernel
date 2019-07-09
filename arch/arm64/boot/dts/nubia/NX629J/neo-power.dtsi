@@ -1,0 +1,23 @@
+&mtp_batterydata {
+	#include "fg-gen4-batterydata-4900mah.dtsi"
+};
+
+&pm8150b_charger {
+	qcom,auto-recharge-soc = <99>;
+	qcom,auto-recharge-vbat-mv = <4340>;
+	qcom,sec-charger-config = <1>;
+	qcom,float-option = <1>;
+	qcom,chg-term-src = <1>;
+	qcom,chg-term-current-ma = <(-300)>;
+	qcom,fcc-max-ua = <4800000>;
+	qcom,fv-max-uv = <4400000>;
+	qcom,usb-icl-ua = <3000000>;
+};
+
+&pm8150b_fg {
+	qcom,fg-force-load-profile;
+	qcom,fg-sys-term-current = <(-400)>;
+	qcom,fg-cutoff-voltage = <3300>;
+	qcom,fg-esr-cal-temp-thresh = <10 45>;
+};
+

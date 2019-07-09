@@ -1,0 +1,217 @@
+/*
+ * nubia overwrite dts
+ */
+&spmi_bus {
+        qcom,pm8150@0 {
+                qcom,power-on@800 {
+                        qcom,pon_1 {
+                                qcom,support-reset = <1>;
+                                qcom,s1-timer = <10256>;
+                                qcom,s2-timer = <2000>;
+                                qcom,s2-type = <7>;
+                        };
+                };
+        };
+};
+
+/* pstore mem*/
+&reserved_memory {
+	pstore_reserve_mem: pstore_reserve_mem_region@0 {
+		linux,reserve-contiguous-region;
+		linux,reserve-region;
+		linux,remove-completely;
+		reg = <0x0 0xAff00000 0x0 0x00100000>;
+		label = "pstore_reserve_mem";
+	};
+};
+
+
+&wdog {
+        qcom,bark-time = <20000>;
+        qcom,pet-time = <15000>;
+};
+
+&soc_trip {
+	temperature = <5>;
+ };
+
+&tlmm {
+	key_game_sw_default: key_game_sw_default {
+		mux {
+			pins = "gpio24";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio24";
+			drive-strength = <2>;
+			bias-pull-up;
+		};
+	};
+
+	cypress_int_active: cypress_int_active {
+		mux {
+			pins = "gpio120";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio120";
+			drive-strength = <6>;
+			bias-pull-up;
+		};
+
+	};
+
+	cypress_int_suspend: cypress_int_suspend {
+		mux {
+			pins = "gpio120";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio120";
+			drive-strength = <6>;
+			bias-disable;
+		};
+
+	};
+
+        nubia_gpio {
+                nubia_gpio_default: nubia_gpio_default {
+                        mux {
+                                pins = "gpio41", "gpio42", "gpio47", "gpio48", "gpio71", "gpio72";
+                                function = "gpio";
+                        };
+                        config {
+                                pins = "gpio41", "gpio42", "gpio47", "gpio48", "gpio71", "gpio72";
+                                driver-strength = <2>; /* 2mA */
+                                bias-pull-up;
+                                input-enable;
+                        };
+                };
+
+                nubia_gpio_pulldown: nubia_gpio_pulldown {
+                        mux {
+                                pins = "gpio41", "gpio42", "gpio47", "gpio48", "gpio71", "gpio72";
+                                function = "gpio";
+                        };
+                        config {
+                                pins = "gpio41", "gpio42", "gpio47", "gpio48", "gpio71", "gpio72";
+                                driver-strength = <2>; /* 2mA */
+                                bias-pull-down;
+                                input-enable;
+                        };
+                };
+        };
+
+};
+
+&soc {
+        nubia_hw_ver_gpio: nubia_hw_gpio_ctrl {
+                compatible = "nubia_hw_gpio_ctrl";
+                qcom,pcb-gpio1 = <&tlmm 41 0x00>;
+                qcom,pcb-gpio2 = <&tlmm 42 0x00>;
+                qcom,rf-gpio1 = <&tlmm 47 0x00>;
+                qcom,rf-gpio2 = <&tlmm 48 0x00>;
+                qcom,config-gpio1 = <&tlmm 71 0x00>;
+                qcom,config-gpio2 = <&tlmm 72 0x00>;
+                pinctrl-names = "pull_up_default","pull_down_default";
+                pinctrl-0 = <&nubia_gpio_default>;
+                pinctrl-1 = <&nubia_gpio_pulldown>;
+        };
+
+	gpio_keys {
+		pinctrl-0 = <&key_vol_up_default &key_game_sw_default>;
+		game_sw {
+			label = "game_sw";
+			gpios = <&tlmm 24 0>;
+			linux,input-type = <5>;
+			linux,code = <0x19>;
+			debounce-interval = <15>;
+			gpio-key,wakeup;
+		};
+	};
+
+	keyreset {
+		compatible = "nubia,keyreset";
+		keys-down = <0x73 0x72>;
+		keys-up = <0x73 0x72>;
+		keyreset-need-panic;
+		key_down_delay = <20>;
+	};
+			
+};
+
+&qupv3_se1_i2c {
+	status = "okay";
+	cypress_touchkey@10 {
+		status = "okay";
+		compatible = "cypress,touchkey-i2c";
+		reg = <0x10>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <120 0x2002>;
+		touchkey,irq-gpio = <&tlmm 120 0x2002>;
+		touchkey,power-gpio = <&tlmm 37 0x00>;
+		touchkey,power-on-flag = <1>;
+		touchkey,avdd-supply = <&pm8150l_l6>;
+		touchkey,irq-on-state = <0>;
+		touchkey,irq-flags = <0x2002>;  //IRQF_ONESHOT | IRQF_TRIGGER_FALLING
+		pinctrl-names = "cypress_int_active", "cypress_int_suspend";
+		pinctrl-0 = <&cypress_int_active>;
+		pinctrl-1 = <&cypress_int_suspend>;
+	};
+};
+
+&dsi_r66455_1080_2340_amoled_cmd_display {
+	qcom,dsi-display-active;
+};
+&qupv3_se0_i2c {
+        status = "okay";
+                nubia_fan@2a {
+                        compatible = "nubia_fan_i2c";
+                        reg = <0x2a>;
+		        pinctrl-names ="default";
+			pinctrl-0 =<&fan_gpio11_default>;
+			reset-gpios =<&pm8150l_gpios  11 GPIO_ACTIVE_LOW>;
+			/*
+			reset-gpio = <&tlmm 134 0x0>;
+                        pinctrl-names = "pull_up_default","pull_down_default";
+                        pinctrl-0 = <&fan_reset_active>;
+		         pinctrl-1 = <&fan_reset_suspend>;
+			 */
+                };
+};
+&tlmm{
+		fan_reset {
+			/*
+			fan_reset_active: fan_reset_active {
+				mux {
+					pins = "gpio134";
+					function = "gpio";
+				};
+				config {
+					pins = "gpio134";
+					drive-strength = <6>;
+					bias-pull-up;
+				};
+			};
+			
+			fan_reset_suspend: fan_reset_suspend {
+				mux {
+					pins = "gpio134";
+					function = "gpio";
+				};
+				config {
+					pins = "gpio134";
+					drive-strength = <6>;
+					bias-disable;
+				};
+			};
+			*/
+		};
+};
+
+
+	
+

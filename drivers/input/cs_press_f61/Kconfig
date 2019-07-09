@@ -1,0 +1,9 @@
+#
+# Chipsea press keys driver configuration
+#
+
+config INPUT_CS_PRESS_F61
+	tristate "chipsea press keys"
+	depends on I2C
+	help
+	  This enables support for chipsea press keys driver.

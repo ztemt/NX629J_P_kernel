@@ -1,0 +1,29 @@
+################################################# SENROS START
+menuconfig NUBIA_DOUBLE_SENSORS
+	tristate "NUBIA SENSORS ON"
+	default n
+	help
+		nubia sensor
+if NUBIA_DOUBLE_SENSORS
+################################################# FRONT RGB START
+config NUBIA_SENSORS_FRONT_RGB_BH1745
+	tristate "support front rgb bh1745 driver"
+	depends on NUBIA_DOUBLE_SENSORS
+	default n
+	help
+		nubia front rgb device
+################################################# BACK RGB&PS START
+config NUBIA_SENSORS_BACK_TMD2725
+	tristate "support back light/prox sensor driver"
+	depends on NUBIA_DOUBLE_SENSORS
+	default n
+	help
+		nubia ambient&&prox device of tmd2725
+################################################# DOUBLE_PROXIMITY
+config NUBIA_SENSORS_FRONT_PS_STK3332
+	tristate "support front proximity driver"
+	depends on NUBIA_DOUBLE_SENSORS
+	default n
+	help
+		nubia device of front proximity
+endif

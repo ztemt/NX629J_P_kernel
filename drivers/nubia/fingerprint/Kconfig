@@ -1,0 +1,51 @@
+################################################# FINGER_PRINTER START
+config  NUBIA_SENSORS_FP
+	tristate "NUBIA FP DEVICE"
+	default y
+
+source drivers/nubia/fingerprint/silead/Kconfig
+
+if NUBIA_SENSORS_FP
+source drivers/nubia/fingerprint/sunwave/Kconfig
+
+source drivers/nubia/fingerprint/gf5288_right/Kconfig
+source drivers/nubia/fingerprint/gf5288_left/Kconfig
+choice
+        prompt "choose the GF5216M device style"
+        depends on NUBIA_SENSORS_FP_GF5288_RIGHT
+        default NUBIA_SENSORS_FP_GF5288_RIGHT_PLATFORM
+        help
+           GF5216M need to select the work style
+
+config NUBIA_SENSORS_FP_GF5288_RIGHT_SPI
+        bool "GF5216M work as SPI device"
+        help
+          If you want GF5216M work as SPI device, select it.
+
+config NUBIA_SENSORS_FP_GF5288_RIGHT_PLATFORM
+        bool "GF5216M work as PLATFORM device"
+        help
+          If you want GF5216M work as PLATFORM device, select it.
+
+endchoice
+choice
+        prompt "choose the GF5216M device style"
+        depends on NUBIA_SENSORS_FP_GF5288_LEFT
+        default NUBIA_SENSORS_FP_GF5288_LEFT_PLATFORM
+        help
+           GF5216M need to select the work style
+
+config NUBIA_SENSORS_FP_GF5288_LEFT_SPI
+        bool "GF5216M work as SPI device"
+        help
+          If you want GF5216M work as SPI device, select it.
+
+config NUBIA_SENSORS_FP_GF5288_LEFT_PLATFORM
+        bool "GF5216M work as PLATFORM device"
+        help
+          If you want GF5216M work as PLATFORM device, select it.
+
+endchoice
+endif
+
+
